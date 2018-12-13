@@ -33,5 +33,5 @@
 .vs/
 Debug/
 *.user
-*.filters
-*.vcxproj
+# *.filters
+# *.vcxproj
