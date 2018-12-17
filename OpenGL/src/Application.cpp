@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Shader.h"
+
 #include <iostream>
 
 #define WINDOW_WIDTH 800
@@ -9,21 +11,6 @@
 void framebuffer_size_callback(GLFWwindow *Window, int width, int height);
 void processInput(GLFWwindow *window);
 
-
-const char * vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const char * fragmentShaderSource = "#version 330 core\n"
-"uniform vec4 vertexColor;\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vertexColor;\n"
-"}\n\0";
 
 int main(void)
 {
@@ -64,73 +51,15 @@ int main(void)
 
 	/* setup window resize callback */
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	
+	Shader shaderProgram("shader/shader1.vs", "shader/shader1.fs");
 
-
-	// create vertex shader
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-
-	// check if compile shader success
-	int compileSuccess;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &compileSuccess);
-
-	if (!compileSuccess)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	// create fragment shader
-	unsigned int fragementShader;
-	fragementShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragementShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragementShader);
-
-	// check if compile shader success
-	glGetShaderiv(fragementShader, GL_COMPILE_STATUS, &compileSuccess);
-
-	if (!compileSuccess)
-	{
-		glGetShaderInfoLog(fragementShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-
-	// link shader
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	// = 0 then fail to create shader program
-	if (shaderProgram == 0)
-	{
-		std::cout << "ERROR::SHADER::CREATE_SHADER_PROGRAM_FAILED\n" << infoLog << std::endl;
-	}
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragementShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &compileSuccess);
-	if (!compileSuccess)
-	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::LINK_SHADER_PROGRAM_FAILED\n" << infoLog << std::endl;
-	}
-
-	std::cout << "OPENGL VERSION: " << glGetString(GL_VERSION) << std::endl;
-
-	// delete shader
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragementShader);
-
+	
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f,  0.5f, 0.0f
+		 // positions		  // colors
+		-0.5f, -0.5f, 0.0f, 1.0f, 0.f, 0.f,
+		0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f,
+		0.0f,  0.5f, 0.0f, 0.f, 0.f, 1.f
 	};
 
 	// vertex buffer object
@@ -142,15 +71,16 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	
-	int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
-
+	float xValue = 0;
+	float offset = 0.05f;
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -162,11 +92,15 @@ int main(void)
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);					
 
-		// USE IT!
-		float timeValue = (float)glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-		glUseProgram(shaderProgram);
+		if (xValue + .5f > 1.f)
+			offset = -0.05f;
+
+		if (xValue - .5f < -1.f)
+			offset = 0.05f;
+		xValue += offset;
+
+		shaderProgram.Use();
+		shaderProgram.SetFloat("offset", xValue);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
