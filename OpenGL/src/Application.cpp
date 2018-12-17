@@ -18,10 +18,11 @@ const char * vertexShaderSource = "#version 330 core\n"
 "}\0";
 
 const char * fragmentShaderSource = "#version 330 core\n"
+"uniform vec4 vertexColor;\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"   FragColor = vertexColor;\n"
 "}\n\0";
 
 int main(void)
@@ -120,6 +121,8 @@ int main(void)
 		std::cout << "ERROR::SHADER::LINK_SHADER_PROGRAM_FAILED\n" << infoLog << std::endl;
 	}
 
+	std::cout << "OPENGL VERSION: " << glGetString(GL_VERSION) << std::endl;
+
 	// delete shader
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragementShader);
@@ -145,9 +148,13 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	
+	int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
+
 		/* key input */
 		processInput(window);
 
@@ -156,6 +163,9 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT);					
 
 		// USE IT!
+		float timeValue = (float)glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
