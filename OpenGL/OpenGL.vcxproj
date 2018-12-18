@@ -134,9 +134,11 @@
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\std_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\shader1.fs" />
