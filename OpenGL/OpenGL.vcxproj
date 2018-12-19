@@ -133,12 +133,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\3_1_shaderinterpolation.cpp" />
+    <ClCompile Include="src\3_z_exercise_3.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\std_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\3_z_exercise1_f.fs" />
+    <None Include="shader\3_z_exercise1_v.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
