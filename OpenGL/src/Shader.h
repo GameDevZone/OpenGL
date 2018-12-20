@@ -93,6 +93,12 @@ public:
 	{
 		glUniformMatrix4fv(glGetUniformLocation(ShaderID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
+
+	void SetVec3(const std::string &name, float x, float y, float z) const
+	{
+
+		glUniform3f(glGetUniformLocation(ShaderID, name.c_str()), x, y, z);
+	}
 private:
 	void checkCompileErrors(unsigned int shader, std::string type)
 	{
