@@ -1,14 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "std_image.h"
+#include "../std_image.h"
 
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
 
-#include "Shader.h"
+#include "../Shader.h"
 #include <iostream>
 
 #define WINDOW_WIDTH 800
@@ -16,27 +16,7 @@
 
 void framebuffer_size_callback(GLFWwindow *Window, int width, int height);
 void processInput(GLFWwindow *window);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-// camera 
-glm::vec3 cameraPos = glm::vec3(0.f, 0.f, 3.f);
-glm::vec3 cameraFront = glm::vec3(0.f, 0.f, -1.f);
-glm::vec3 cameraUp = glm::vec3(0.f, 1.f, 0.f);
-
-// delta time
-float deltaTime = .0f;
-float lastTime = .0f;
-
-// camera look around
-bool firstMouse = true;
-float pitch = .0f;
-float yaw = -90.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-
-// zoom
-float fov = 45.0f;
 
 int main(void)
 {
@@ -75,18 +55,10 @@ int main(void)
 
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
 	/* setup window resize callback */
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	// setup mouse postion callback
-	glfwSetCursorPosCallback(window, mouse_callback);
-
-	// setup wheel scroll call back
-	glfwSetScrollCallback(window, scroll_callback);
-
-	Shader shaderProgram("shader/6_1_coordinate_system.vs", "shader/6_1_coordinate_system.fs");
+	Shader shaderProgram("shader/1_section_shaders/6_1_coordinate_system.vs", "shader/1_section_shaders/6_1_coordinate_system.fs");
 
 
 	float vertices[] = {
@@ -216,30 +188,26 @@ int main(void)
 	shaderProgram.SetInt("ourTexture1", 0); // this name has to be same as the uniform variable name in the shader
 	shaderProgram.SetInt("ourTexture2", 1);
 
+	
+
+	// view matrix
+	glm::mat4 view(1.0f);
+	view = glm::translate(view, glm::vec3(0.f, 0.f, -2.f));
+
+	// project matrix
+	glm::mat4 projection(1.0f);
+	projection = glm::perspective(glm::radians(65.0f), (float)width / (float)height, .1f, 100.f);
 
 
+	shaderProgram.SetMat4("view", view);
+	shaderProgram.SetMat4("projection", projection);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		float currentFrame = (float)glfwGetTime();
-		deltaTime = currentFrame - lastTime;
-		lastTime = currentFrame;
+
 		/* key input */
 		processInput(window);
-
-
-		// project matrix
-		glm::mat4 projection(1.0f);
-		projection = glm::perspective(glm::radians(fov), (float)width / (float)height, .1f, 100.f);
-
-		shaderProgram.SetMat4("projection", projection);
-
-		// view matrix
-		glm::mat4 view(1.0f);
-
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		shaderProgram.SetMat4("view", view);
 
 		/* render commands */
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
@@ -261,7 +229,6 @@ int main(void)
 			model = glm::translate(model, cubePositions[i]);
 			model = glm::rotate(model, (float)glfwGetTime() * glm::radians(45.f), glm::vec3(1.f, 1.f, 1.f));
 			shaderProgram.SetMat4("model", model);
-
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 	
@@ -282,51 +249,6 @@ int main(void)
 	return 0;
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	if (fov >= 1.0f && fov <= 95.0f)
-		fov -= yoffset;
-	if (fov <= 1.0f)
-		fov = 1.0f;
-	if (fov >= 95.0f)
-		fov = 95.0f;
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = (float)xpos;
-		lastY = (float)ypos;
-		firstMouse = false;
-	}
-	else
-	{
-		float offsetX = (float)xpos - lastX;
-		float offsetY = lastY - (float)ypos;
-		lastX = (float)xpos;
-		lastY = (float)ypos;
-
-		float sensitivity = .05f;
-		offsetX *= sensitivity;
-		offsetY *= sensitivity;
-
-		yaw += offsetX;
-		pitch += offsetY;
-
-		if (pitch > 89.0f)
-			pitch = 89.0f;
-
-		if (pitch < -89.0f)
-			pitch = -89.0f;
-
-		glm::vec3 front;
-		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-		front.y = sin(glm::radians(pitch));
-		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-		cameraFront = glm::normalize(front);
-	}
-}
 
 void framebuffer_size_callback(GLFWwindow *Window, int width, int height)
 {
@@ -335,39 +257,8 @@ void framebuffer_size_callback(GLFWwindow *Window, int width, int height)
 
 void processInput(GLFWwindow *window)
 {
-	float cameraSpeed = 2.5f * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 	{
 		glfwSetWindowShouldClose(window, true);
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * cameraFront;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * cameraFront;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * (glm::normalize(glm::cross(cameraFront, cameraUp)));
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * (glm::normalize(glm::cross(cameraFront, cameraUp)));
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * cameraUp;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * cameraUp;
 	}
 }

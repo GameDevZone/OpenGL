@@ -1,14 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "std_image.h"
+#include "../std_image.h"
 
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
 
-#include "Shader.h"
+#include "../Shader.h"
 #include <iostream>
 
 #define WINDOW_WIDTH 800
@@ -16,15 +16,6 @@
 
 void framebuffer_size_callback(GLFWwindow *Window, int width, int height);
 void processInput(GLFWwindow *window);
-
-// camera 
-glm::vec3 cameraPos = glm::vec3(0.f, 0.f, 3.f);
-glm::vec3 cameraFront = glm::vec3(0.f, 0.f, -1.f);
-glm::vec3 cameraUp = glm::vec3(0.f, 1.f, 0.f);
-
-// delta time
-float deltaTime = .0f;
-float lastTime = .0f;
 
 
 int main(void)
@@ -67,7 +58,7 @@ int main(void)
 	/* setup window resize callback */
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	Shader shaderProgram("shader/6_1_coordinate_system.vs", "shader/6_1_coordinate_system.fs");
+	Shader shaderProgram("shader/1_section_shaders/6_1_coordinate_system.vs", "shader/1_section_shaders/6_1_coordinate_system.fs");
 
 
 	float vertices[] = {
@@ -197,20 +188,20 @@ int main(void)
 	shaderProgram.SetInt("ourTexture1", 0); // this name has to be same as the uniform variable name in the shader
 	shaderProgram.SetInt("ourTexture2", 1);
 
+	
+
+	
 	// project matrix
 	glm::mat4 projection(1.0f);
 	projection = glm::perspective(glm::radians(95.0f), (float)width / (float)height, .1f, 100.f);
 
+
 	shaderProgram.SetMat4("projection", projection);
-
-
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastTime;
-		lastTime = currentFrame;
+
 		/* key input */
 		processInput(window);
 
@@ -237,8 +228,10 @@ int main(void)
 
 			// view matrix
 			glm::mat4 view(1.0f);
-			
-			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			float radius = 10.f;
+			float camX = sin((float)glfwGetTime()) * radius;
+			float camZ = cos((float)glfwGetTime()) * radius;
+			view = glm::lookAt(glm::vec3(camX, 0.f, camZ), glm::vec3(0.f), glm::vec3(0.f, 1.f, 0.f));
 			shaderProgram.SetMat4("view", view);
 
 
@@ -270,39 +263,8 @@ void framebuffer_size_callback(GLFWwindow *Window, int width, int height)
 
 void processInput(GLFWwindow *window)
 {
-	float cameraSpeed = 2.5f * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 	{
 		glfwSetWindowShouldClose(window, true);
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * cameraFront;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * cameraFront;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * (glm::normalize(glm::cross(cameraFront, cameraUp)));
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * (glm::normalize(glm::cross(cameraFront, cameraUp)));
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-	{
-		cameraPos += cameraSpeed * cameraUp;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-	{
-		cameraPos -= cameraSpeed * cameraUp;
 	}
 }

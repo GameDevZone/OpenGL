@@ -1,14 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "std_image.h"
+#include "../std_image.h"
 
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
 
-#include "Shader.h"
+#include "../Shader.h"
 #include <iostream>
 
 #define WINDOW_WIDTH 800
@@ -58,7 +58,7 @@ int main(void)
 	/* setup window resize callback */
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	Shader shaderProgram("shader/5_1_transformation.vs", "shader/5_1_transformation.fs");
+	Shader shaderProgram("shader/1_section_shaders/5_1_transformation.vs", "shader/1_section_shaders/5_1_transformation.fs");
 
 
 	float vertices[] = {

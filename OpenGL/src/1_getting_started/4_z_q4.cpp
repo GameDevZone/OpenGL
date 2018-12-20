@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Shader.h"
-#include "std_image.h"
+#include "../Shader.h"
+#include "../std_image.h"
 #include <iostream>
 
 #define WINDOW_WIDTH 800
@@ -10,6 +10,8 @@
 
 void framebuffer_size_callback(GLFWwindow *Window, int width, int height);
 void processInput(GLFWwindow *window);
+
+float alpahOffset = 0.f;
 
 
 int main(void)
@@ -52,7 +54,7 @@ int main(void)
 	/* setup window resize callback */
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	Shader shaderProgram("shader/4_1_texture_v.vs", "shader/4_1_texture_f.fs");
+	Shader shaderProgram("shader/1_section_shaders/4_z_4_texture_combined.vs", "shader/1_section_shaders/4_z_4_texture_combined.fs");
 
 
 	float vertices[] = {
@@ -93,9 +95,9 @@ int main(void)
 
 	// load and create a texture 
 	// -------------------------
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	unsigned int texture1, texture2;
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -117,6 +119,31 @@ int main(void)
 	}
 	stbi_image_free(data);
 
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	stbi_set_flip_vertically_on_load(true);
+	data = stbi_load("Resources/textures/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
+	shaderProgram.Use();
+	shaderProgram.SetInt("ourTexture1", 0); // this name has to be same as the uniform variable name in the shader
+	shaderProgram.SetInt("ourTexture2", 1);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -128,9 +155,13 @@ int main(void)
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		shaderProgram.Use();
+		shaderProgram.SetFloat("alpha", alpahOffset);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -144,6 +175,7 @@ int main(void)
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	/* clear all the stuff */
 	glfwTerminate();
@@ -161,5 +193,19 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 	{
 		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_UP))
+	{
+		alpahOffset += 0.01F;
+		if (alpahOffset > 1.0f)
+			alpahOffset = 1.0f;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_DOWN))
+	{
+		alpahOffset -= 0.01F;
+		if (alpahOffset < -1.0f)
+			alpahOffset = 0.0f;
 	}
 }

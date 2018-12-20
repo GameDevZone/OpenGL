@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLM\;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\shader\;$(SolutionDir)Dependencies\GLM\;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2015</AdditionalLibraryDirectories>
@@ -107,7 +107,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLM\;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\shader\;$(SolutionDir)Dependencies\GLM\;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLAD\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -133,17 +133,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\7_4_camera_lookaround_withcameraclass.cpp" />
+    <ClCompile Include="src\1_getting_started\7_4_camera_lookaround_withcameraclass.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\std_image.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shader\3_z_exercise1_f.fs" />
-    <None Include="shader\3_z_exercise1_v.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

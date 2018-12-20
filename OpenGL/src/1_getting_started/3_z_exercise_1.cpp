@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Shader.h"
+#include "../Shader.h"
 
 // window size change call back
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -43,7 +43,7 @@ int main()
 		return -1;
 	}
 
-	Shader shaderProgram("shader/3_z_exercise1_v.vs", "shader/3_z_exercise1_f.fs");
+	Shader shaderProgram("shader/1_section_shaders/3_z_exercise1_v.vs", "shader/1_section_shaders/3_z_exercise1_f.fs");
 
 	// triangle
 	float vertices[] = {

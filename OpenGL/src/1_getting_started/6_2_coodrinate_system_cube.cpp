@@ -1,14 +1,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "std_image.h"
+#include "../std_image.h"
 
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
 
-#include "Shader.h"
+#include "../Shader.h"
 #include <iostream>
 
 #define WINDOW_WIDTH 800
@@ -58,7 +58,7 @@ int main(void)
 	/* setup window resize callback */
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	Shader shaderProgram("shader/6_1_coordinate_system.vs", "shader/6_1_coordinate_system.fs");
+	Shader shaderProgram("shader/1_section_shaders/6_1_coordinate_system.vs", "shader/1_section_shaders/6_1_coordinate_system.fs");
 
 
 	float vertices[] = {
@@ -103,19 +103,6 @@ int main(void)
 		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
 	// vertex buffer object
@@ -192,7 +179,7 @@ int main(void)
 
 	// view matrix
 	glm::mat4 view(1.0f);
-	view = glm::translate(view, glm::vec3(0.f, 0.f, -5.f));
+	view = glm::translate(view, glm::vec3(0.f, 0.f, -2.f));
 
 	// project matrix
 	glm::mat4 projection(1.0f);
@@ -220,19 +207,14 @@ int main(void)
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		// model matrix
+		glm::mat4 model(1.0f);
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(45.f), glm::vec3(1.f, 1.f, 1.f));
+		shaderProgram.SetMat4("model", model);
+	
 		shaderProgram.Use();
 		glBindVertexArray(VAO);
-		// model matrix
-		for(unsigned int i = 0; i < 10; ++i)
-		{
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			if (i % 3 == 0)
-				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(45.f), glm::vec3(1.f, 1.f, 1.f));
-			shaderProgram.SetMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-	
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 		/* Swap front and back buffers */
