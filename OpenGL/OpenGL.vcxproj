@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\6_2_coodrinate_system_cube_multiple.cpp" />
+    <ClCompile Include="src\6_z_q3.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
