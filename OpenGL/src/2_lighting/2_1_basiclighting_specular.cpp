@@ -73,7 +73,7 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	Shader shaderProgram("shader/2_section_shaders/2_1_basiclighting_specular.vs", "shader/2_section_shaders/2_1_basiclighting_specular.fs");
+	Shader shaderProgram("shader/2_section_shaders/2_1_basiclighting_flat_shader.vs", "shader/2_section_shaders/2_1_basiclighting_flat_shader.fs");
 	Shader lampShader("shader/2_section_shaders/1_1_lamp.vs", "shader/2_section_shaders/1_1_lamp.fs");
 
 
