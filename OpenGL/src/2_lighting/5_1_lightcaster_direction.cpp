@@ -79,7 +79,7 @@ int main(void)
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	Shader shaderProgram("shader/2_section_shaders/4_5_lightmap_specular_emission.vs", "shader/2_section_shaders/4_5_lightmap_specular_emission.fs");
+	Shader shaderProgram("shader/2_section_shaders/5_1_lightcaster_direction.vs", "shader/2_section_shaders/5_1_lightcaster_direction.fs");
 	Shader lampShader("shader/2_section_shaders/1_1_lamp.vs", "shader/2_section_shaders/1_1_lamp.fs");
 
 
@@ -128,6 +128,19 @@ int main(void)
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
 
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 
 	// vertex buffer object
 	unsigned int VBO, cubeVAO;
@@ -159,12 +172,10 @@ int main(void)
 
 	unsigned int diffuseTexture = loadTexture("Resources/textures/container2.png");
 	unsigned int specularTexture = loadTexture("Resources/textures/container2_specular.png");
-	unsigned int emissionTexture = loadTexture("Resources/textures/matrix.jpg");
 
 	shaderProgram.Use();
 	shaderProgram.SetInt("material.diffuseTexture", 0);
 	shaderProgram.SetInt("material.specularTexture", 1);
-	shaderProgram.SetInt("material.emissionTexture", 2);
 
 	glm::vec3 lightColor;
 
@@ -180,18 +191,12 @@ int main(void)
 		/* render commands */
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		lightColor.x = sin((float)glfwGetTime() * 2.0f);
-		lightColor.y = sin((float)glfwGetTime() * 0.7f);
-		lightColor.z = sin((float)glfwGetTime() * 1.3f);
-
-		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+		glEnable(GL_DEPTH_TEST);
 
 		shaderProgram.Use();
-		shaderProgram.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		shaderProgram.SetFloat("material.shininess", shininess);
-		shaderProgram.SetFloat("time", currentFrame);
 
+		shaderProgram.SetVec3("light.direction", -0.2f, -1.0f, -0.3f);
 		shaderProgram.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
 		shaderProgram.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		shaderProgram.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
@@ -213,40 +218,37 @@ int main(void)
 			float y = cos(totalDelta) * 5.0f;
 			lightPos = glm::vec3(x, 0.f, y);
 		}
-		shaderProgram.SetVec3("lightPos", lightPos);
-
-
-		glEnable(GL_DEPTH_TEST);
-
-		// world transformation
-		glm::mat4 model(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0., 1.0, 0.));
-		shaderProgram.SetMat4("model", model);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseTexture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularTexture);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, emissionTexture);
 
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			shaderProgram.SetMat4("model", model);
+			glBindVertexArray(cubeVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 
-		// also draw the lamp object
-		lampShader.Use();
-		lampShader.SetMat4("projection", projection);
-		lampShader.SetMat4("view", view);
 
-		model = glm::mat4(1.f);
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.4f));
-		model = glm::rotate(model, (float)glfwGetTime() * 2.f, glm::vec3(1.0, 1.0, 1.));
-		lampShader.SetMat4("model", model);
+		//// also draw the lamp object
+		//lampShader.Use();
+		//lampShader.SetMat4("projection", projection);
+		//lampShader.SetMat4("view", view);
 
-		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//model = glm::mat4(1.f);
+		//model = glm::translate(model, lightPos);
+		//model = glm::scale(model, glm::vec3(0.4f));
+		//lampShader.SetMat4("model", model);
+
+		//glBindVertexArray(lightVAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
