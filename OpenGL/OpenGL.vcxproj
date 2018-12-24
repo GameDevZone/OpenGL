@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\3_model_loading\model_loading.cpp" />
+    <ClCompile Include="src\4_advanced_opengl\1_1_depth_testing.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +146,8 @@
   <ItemGroup>
     <None Include="shader\3_section_shaders\1_model_loading.fs" />
     <None Include="shader\3_section_shaders\1_model_loading.vs" />
+    <None Include="shader\4_section_shaders\1_1_depth_testing.fs" />
+    <None Include="shader\4_section_shaders\1_1_depth_testing.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
