@@ -95,7 +95,7 @@ int main(void)
 	//glDepthFunc(GL_ALWAYS);
 
 	Shader shaderProgram("shader/4_section_shaders/5_1_regular_texture.vs", "shader/4_section_shaders/5_1_regular_texture.fs");
-	Shader quadProgram("shader/4_section_shaders/5_1_frame_buffer.vs", "shader/4_section_shaders/5_5_post_processing_blur.fs");
+	Shader quadProgram("shader/4_section_shaders/5_1_frame_buffer.vs", "shader/4_section_shaders/5_6_post_processing_edge.fs");
 
 	float cubeVertices[] = {
 		// positions          // texture Coords
