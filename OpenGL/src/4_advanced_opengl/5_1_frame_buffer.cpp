@@ -95,7 +95,7 @@ int main(void)
 	//glDepthFunc(GL_ALWAYS);
 
 	Shader shaderProgram("shader/4_section_shaders/5_1_regular_texture.vs", "shader/4_section_shaders/5_1_regular_texture.fs");
-	Shader quadProgram("shader/4_section_shaders/5_1_frame_buffer.vs", "shader/4_section_shaders/5_1_frame_buffer.fs");
+	Shader quadProgram("shader/4_section_shaders/5_1_frame_buffer.vs", "shader/4_section_shaders/5_2_post_processing_inversion.fs");
 
 	float cubeVertices[] = {
 		// positions          // texture Coords
@@ -178,7 +178,7 @@ int main(void)
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glBindVertexArray(0);
 
-	unsigned int cubeTexture = loadTexture("Resources/textures/marble.jpg");
+	unsigned int cubeTexture = loadTexture("Resources/textures/container.jpg");
 	unsigned int floorTexture = loadTexture("Resources/textures/metal.png");
 
 	shaderProgram.Use();
