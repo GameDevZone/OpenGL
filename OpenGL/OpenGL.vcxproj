@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\4_advanced_opengl\6_1_skybox.cpp" />
+    <ClCompile Include="src\4_advanced_opengl\6_1_skybox_optimization.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
