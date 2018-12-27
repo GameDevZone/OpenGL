@@ -21,7 +21,7 @@
     <ClCompile Include="src\std_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\4_advanced_opengl\6_2_environment_mapping_cube.cpp">
+    <ClCompile Include="src\4_advanced_opengl\6_3_environment_mapping_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
