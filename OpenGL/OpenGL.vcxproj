@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\4_advanced_opengl\6_4_environment_mapping_model_refraction.cpp" />
+    <ClCompile Include="src\4_advanced_opengl\6_6_environment_mapping_model_reflection.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
