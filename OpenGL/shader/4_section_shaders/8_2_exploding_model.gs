@@ -26,7 +26,7 @@ vec4 explode(vec4 position, vec3 normal)
 {
 	float magnitude = 2.0f;
 	vec3 direction = normal * magnitude * ((sin(time) + 1.0) / 2.0);
-	return position + vec4(direction, 1.0);
+	return position + vec4(direction, 0.0);
 }
 
 void main()
