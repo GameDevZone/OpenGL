@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\4_advanced_opengl\8_1_geometry_shader_drawhouse.cpp" />
+    <ClCompile Include="src\4_advanced_opengl\8_2_exploding_model_with_geometry_shader.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
