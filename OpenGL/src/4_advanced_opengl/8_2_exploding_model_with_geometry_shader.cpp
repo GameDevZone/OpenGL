@@ -244,12 +244,13 @@ int main(void)
 		shaderProgram.SetVec3("dirLight.diffuse", 0.5f, 0.5f, 0.5f);
 		shaderProgram.SetVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
+		shaderProgram.SetFloat("time", glm::radians(totalDelta));
+		
 		if (bExplode)
 		{
-			totalDelta += deltaTime;
+			totalDelta += deltaTime * 10.0f;
 		}
 
-		shaderProgram.SetFloat("time", totalDelta);
 
 		glm::mat4 model(1.0);
 		model = glm::translate(model, glm::vec3(0.0, -10.0f, -10.0f));
