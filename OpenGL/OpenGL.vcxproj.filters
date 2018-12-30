@@ -21,7 +21,7 @@
     <ClCompile Include="src\std_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\4_advanced_opengl\10_1_multisample_antaliasing.cpp">
+    <ClCompile Include="src\4_advanced_opengl\10_2_multisample_antialiasing_offscreen_renderbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
