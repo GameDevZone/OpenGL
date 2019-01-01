@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\5_advanced_lighting\1_1_advanced_light_blinn_phong.cpp" />
+    <ClCompile Include="src\5_advanced_lighting\2_1_gamma_correction.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
