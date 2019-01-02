@@ -30,6 +30,10 @@ float ShadowCalculation(vec4 FragPosLightSpace, vec3 normal, vec3 lightDir)
 	float currentDepth = projectCoords.z;
 
 	float shadow = (currentDepth - bias) > closetDepth ? 1.0 : 0.0;
+	if (projectCoords.z > 1.0) // if it out of the light frustum force shadow = 0
+	{
+		shadow = 0.0;	
+	}
 
 	return shadow;
 }
