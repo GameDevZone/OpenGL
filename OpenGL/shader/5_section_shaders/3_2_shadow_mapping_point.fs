@@ -28,6 +28,8 @@ float ShadowCalculation(vec3 fragPos)
 
 	float shadow = currentDepth - bias > closetDepth ? 1.0 : 0.0;
 
+	shadow = closetDepth;
+
 	return shadow;
 }
 
@@ -53,6 +55,8 @@ void main()
 	// shadow
 	float shadow = ShadowCalculation(fs_in.FragPos);
 	vec3 final = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+
+	final = vec3(shadow / far_plane);
 
 	FragColor = vec4(final, 1.0);
 }
