@@ -14,7 +14,7 @@ uniform sampler2D shadowMap;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-float ShadowCalculation(vec4 FragPosLightSpace)
+float ShadowCalculation(vec4 FragPosLightSpace, vec3 normal, vec3 lightDir)
 {
 	// perform perspective divide
 	vec3 projectCoords = FragPosLightSpace.xyz / FragPosLightSpace.w;
@@ -25,7 +25,7 @@ float ShadowCalculation(vec4 FragPosLightSpace)
 	// get closeth from shadow map
 	float closetDepth = texture(shadowMap, projectCoords.xy).r;
 
-	float bias = 0.005f;
+	float bias = max(0.05 * (1 - dot(normal, lightDir)), 0.005);
 	// current depth
 	float currentDepth = projectCoords.z;
 
@@ -54,7 +54,7 @@ void main()
     vec3 specular = spec * lightColor;    
 
 	// shadow
-	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
+	float shadow = ShadowCalculation(fs_in.FragPosLightSpace, normal, lightDir);
 	vec3 final = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 
 	FragColor = vec4(final, 1.0);
