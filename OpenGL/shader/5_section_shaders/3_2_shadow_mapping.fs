@@ -29,10 +29,23 @@ float ShadowCalculation(vec4 FragPosLightSpace, vec3 normal, vec3 lightDir)
 	// current depth
 	float currentDepth = projectCoords.z;
 
-	float shadow = (currentDepth - bias) > closetDepth ? 1.0 : 0.0;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
 	if (projectCoords.z > 1.0) // if it out of the light frustum force shadow = 0
 	{
 		shadow = 0.0;	
+	}
+	else // percentage closer flitering
+	{
+		for(int x = -1; x <= 1; x ++)
+		{
+			for(int y = -1; y <= 1; y ++)
+			{
+				float pcfDepth = texture(shadowMap, projectCoords.xy + vec2(x, y) * texelSize).r;
+				shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+			}
+		}
+		shadow /= 9.0;
 	}
 
 	return shadow;

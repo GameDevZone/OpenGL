@@ -18,7 +18,7 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
-const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+const unsigned int SHADOW_WIDTH = 1024 * 2, SHADOW_HEIGHT = 1024 * 2;
 
 void framebuffer_size_callback(GLFWwindow *Window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -202,9 +202,9 @@ int main(void)
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, woodTexture);
-		glEnable(GL_FRONT);
+		//glEnable(GL_FRONT);
 		renderScene(depthShaderProgram);
-		glEnable(GL_BACK);
+		//glEnable(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//reset window
