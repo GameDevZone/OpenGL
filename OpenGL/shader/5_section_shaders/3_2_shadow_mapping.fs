@@ -25,10 +25,11 @@ float ShadowCalculation(vec4 FragPosLightSpace)
 	// get closeth from shadow map
 	float closetDepth = texture(shadowMap, projectCoords.xy).r;
 
+	float bias = 0.005f;
 	// current depth
 	float currentDepth = projectCoords.z;
 
-	float shadow = currentDepth > closetDepth ? 1.0 : 0.0;
+	float shadow = (currentDepth - bias) > closetDepth ? 1.0 : 0.0;
 
 	return shadow;
 }
@@ -37,7 +38,7 @@ void main()
 {           
 	vec3 color = texture(diffuseTexture, fs_in.TexCoords).rgb;
     vec3 normal = normalize(fs_in.Normal);
-    vec3 lightColor = vec3(0.3);
+    vec3 lightColor = vec3(0.8);
     // ambient
     vec3 ambient = 0.3 * color;
     // diffuse
