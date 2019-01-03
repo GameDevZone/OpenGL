@@ -21,7 +21,7 @@
     <ClCompile Include="src\std_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\5_advanced_lighting\3_5_normal_map.cpp">
+    <ClCompile Include="src\5_advanced_lighting\3_6_normal_map_TBN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
