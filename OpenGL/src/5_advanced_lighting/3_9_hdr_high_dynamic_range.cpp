@@ -34,7 +34,7 @@ void renderCube();
 void renderQuad();
 
 // camera 
-Camera camera(glm::vec3(0.f, 0.f, 3.0f));
+Camera camera(glm::vec3(0.f, 0.f, 3.0f), glm::vec3(0.0, 1.0, 0.0), 90.0);
 bool firstMouse = true;
 float lastX = WINDOW_WIDTH / 2.0;
 float lastY = WINDOW_WIDTH / 2.0;
@@ -185,7 +185,10 @@ int main(void)
 		hdrShader.Use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, floatColorBuffer);
+		hdrShader.SetInt("hdr", hdr);
+		hdrShader.SetFloat("exposure", exposure);
 		renderQuad();
+		std::cout << "hdr: " << (hdr ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -351,6 +354,28 @@ void processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		camera.ProcessKeyboard(UP, deltaTime);	
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !hdrKeyPressed)
+	{
+		hdr = !hdr;
+		hdrKeyPressed = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	{
+		hdrKeyPressed = false;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		if (exposure > 0.0f)
+			exposure -= 0.001f;
+		else
+			exposure = 0.0f;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		exposure += 0.001f;
+	}
 
 }
 
