@@ -88,8 +88,8 @@ int main(void)
 	glEnable(GL_DEPTH_TEST);
 	
 	Shader quadNormalProgram(
-		"shader/5_section_shaders/3_8_steep_parallex_mapping_multiple_samples.vs",
-		"shader/5_section_shaders/3_8_steep_parallex_mapping_multiple_samples.fs");
+		"shader/5_section_shaders/3_9_parallex_occlusion_mapping.vs",
+		"shader/5_section_shaders/3_9_parallex_occlusion_mapping.fs");
 	
 	
 	Shader lightOjbect(
@@ -99,6 +99,11 @@ int main(void)
 	unsigned int brickTexture = loadTexture("Resources/textures/wood.png", false);
 	unsigned int brickNormalMap = loadTexture("Resources/textures/toy_box_normal.png", false);
 	unsigned int brickDepthMap = loadTexture("Resources/textures/toy_box_disp.png", false);
+
+
+	//unsigned int brickTexture = loadTexture("Resources/textures/bricks2.jpg", false);
+	//unsigned int brickNormalMap = loadTexture("Resources/textures/bricks2_normal.jpg", true);
+	//unsigned int brickDepthMap = loadTexture("Resources/textures/bricks2_disp.jpg", false);
 	
 	quadNormalProgram.Use();
 	quadNormalProgram.SetInt("diffuseMap", 0);
@@ -119,7 +124,7 @@ int main(void)
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//lightPos.z = sin((float)glfwGetTime() * 0.5f) * 2.0f;
+		lightPos.y = sin((float)glfwGetTime() * 0.5f) * 2.0f;
 		//lightPos.x = sin((float)glfwGetTime() * 0.5f) * 2.0f;
 		
 		//reset window
