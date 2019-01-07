@@ -46,7 +46,7 @@ float lastTime = .0f;
 // switch diffuse color buffer
 int startIndex = 0; // 0,1,2
 bool switchKeyPressed = false;
-
+#define max_index 3
 
 int main(void)
 {
@@ -98,9 +98,17 @@ int main(void)
 	Shader singleBufferShow(
 		"shader/5_section_shaders/3_12_show_gbuffer.vs",
 		"shader/5_section_shaders/3_12_show_gbuffer.fs");
+	
+	Shader lightGeometryPass(
+		"shader/5_section_shaders/3_12_lighting_geomety_buffer.vs",
+		"shader/5_section_shaders/3_12_lighting_geomety_buffer.fs");
 
 	singleBufferShow.Use();
 	singleBufferShow.SetInt("imageBuffer", 0);
+	lightGeometryPass.Use();
+	lightGeometryPass.SetInt("position", 0);
+	lightGeometryPass.SetInt("normal", 1);
+	lightGeometryPass.SetInt("albedo", 2);
 
 	Model nanosuit("Resources/objects/nanosuit/nanosuit.obj");
 
@@ -210,14 +218,47 @@ int main(void)
 		// render to normal frame buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		singleBufferShow.Use();
-		glActiveTexture(GL_TEXTURE0);
+		
 		if (startIndex == 0)
+		{
+			singleBufferShow.Use();
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, positionBuffer);
+		}
 		else if (startIndex == 1)
+		{
+			singleBufferShow.Use();
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, normalBuffer);
+		}
 		else if (startIndex == 2)
+		{
+			singleBufferShow.Use();
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, albedoSpecBuffer);
+		}
+		else if (startIndex == 3)
+		{
+			lightGeometryPass.Use();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, positionBuffer);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, normalBuffer);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, albedoSpecBuffer);
+			for (unsigned int i = 0; i < lightPositions.size(); i++)
+			{
+				lightGeometryPass.SetVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+				lightGeometryPass.SetVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
+				// update attenuation parameters and calculate radius
+				const float constant = 1.0; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+				const float linear = 0.7;
+				const float quadratic = 1.8;
+				lightGeometryPass.SetFloat("lights[" + std::to_string(i) + "].Linear", linear);
+				lightGeometryPass.SetFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+			}
+			lightGeometryPass.SetVec3("viewPos", camera.Position);
+		}
 		
 		renderQuad();
 
@@ -389,7 +430,7 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !switchKeyPressed)
 	{
 		startIndex += 1;
-		if ((startIndex) > 2)
+		if ((startIndex) > max_index)
 			startIndex = 0;
 		switchKeyPressed = true;
 	}
