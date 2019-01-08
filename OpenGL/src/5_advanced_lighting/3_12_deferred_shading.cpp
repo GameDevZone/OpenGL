@@ -103,6 +103,10 @@ int main(void)
 		"shader/5_section_shaders/3_12_lighting_geomety_buffer.vs",
 		"shader/5_section_shaders/3_12_lighting_geomety_buffer.fs");
 
+	Shader lightObject(
+		"shader/5_section_shaders/3_12_deferred_lighting_box.vs",
+		"shader/5_section_shaders/3_12_deferred_lighting_box.fs");
+
 	singleBufferShow.Use();
 	singleBufferShow.SetInt("imageBuffer", 0);
 	lightGeometryPass.Use();
@@ -215,6 +219,7 @@ int main(void)
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		
 		// render to normal frame buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -224,18 +229,21 @@ int main(void)
 			singleBufferShow.Use();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, positionBuffer);
+			renderQuad();
 		}
 		else if (startIndex == 1)
 		{
 			singleBufferShow.Use();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, normalBuffer);
+			renderQuad();
 		}
 		else if (startIndex == 2)
 		{
 			singleBufferShow.Use();
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, albedoSpecBuffer);
+			renderQuad();
 		}
 		else if (startIndex == 3)
 		{
@@ -258,9 +266,29 @@ int main(void)
 				lightGeometryPass.SetFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
 			}
 			lightGeometryPass.SetVec3("viewPos", camera.Position);
+			renderQuad();
+
+			// copy depth info from geometry buffer
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, geometryBuffer);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+													
+			glBlitFramebuffer(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+			// render lightobject cube
+			lightObject.Use();
+			lightObject.SetMat4("projection", projection);
+			lightObject.SetMat4("view", view);
+			for (unsigned int i = 0; i < lightPositions.size(); i++)
+			{
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, lightPositions[i]);
+				model = glm::scale(model, glm::vec3(0.25f));
+				lightObject.SetMat4("model", model);
+				lightObject.SetVec3("lightColor", lightColors[i]);
+				renderCube();
+			}
 		}
-		
-		renderQuad();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
