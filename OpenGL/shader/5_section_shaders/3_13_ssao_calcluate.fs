@@ -12,7 +12,7 @@ uniform mat4 projection;
 
 uniform float kernelSize;
 uniform float radius;
-
+uniform float power;
 const vec2 noiseScale = vec2(1280/4.0, 720/4.0);
 const float bias = 0.025;
 
@@ -42,5 +42,6 @@ void main()
 		occlusion += ((depthValue >= sample.z + bias) ? 1.0 : 0.0) * rangeCheck;
 	}
 	occlusion = 1.0 - (occlusion / kernelSize);
+	occlusion = pow(occlusion, power);
 	FragColor = occlusion;
 }
