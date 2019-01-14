@@ -50,7 +50,9 @@ float lastY = WINDOW_WIDTH / 2.0;
 float deltaTime = .0f;
 float lastTime = .0f;
 
-
+// direction light change dir
+bool rotateDir = false;
+bool rotateKeyPressed = false;
 int main(void)
 {
 	GLFWwindow* window;
@@ -113,9 +115,9 @@ int main(void)
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
 	pbrShader.Use();
 	pbrShader.SetMat4("projection", projection);
-	pbrShader.SetVec3("lightDirection", lightDirection);
 	pbrShader.SetVec3("lightColor", lightColor);
 
+	float totalTime = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = (float)glfwGetTime();
@@ -123,6 +125,15 @@ int main(void)
 		lastTime = currentFrame;
 		/* key input */
 		processInput(window);
+		
+		//lightDirection.z += sin(glfwGetTime()) + 1.0f;
+		if (rotateDir)
+		{
+			totalTime += deltaTime;
+			lightDirection.x = sin(totalTime) * 3.0f;
+			lightDirection.z = cos(totalTime) * 3.0f;
+		}
+		pbrShader.SetVec3("lightDirection", lightDirection);
 
 		glClearColor(0.01f, 0.01f, 0.01f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -410,6 +421,18 @@ void processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		camera.ProcessKeyboard(UP, deltaTime);	
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !rotateKeyPressed)
+	{
+		rotateDir = !rotateDir;
+		rotateKeyPressed = true;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+	{
+		//rotateDir = false;
+		rotateKeyPressed = false;
+	}
 
 }
 
