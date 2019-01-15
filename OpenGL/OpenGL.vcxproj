@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\GLAD\src\glad.c" />
-    <ClCompile Include="src\6_pbr\1_3_pbr_with_point_light_textured.cpp" />
+    <ClCompile Include="src\6_pbr\2_1_pbr_with_ibl_hdr_conversion.cpp" />
     <ClCompile Include="src\std_image.cpp" />
   </ItemGroup>
   <ItemGroup>
