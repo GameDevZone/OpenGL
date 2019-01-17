@@ -21,7 +21,7 @@
     <ClCompile Include="src\std_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\6_pbr\2_2_pbr_with_ibl_hdr_conversion_convolution.cpp">
+    <ClCompile Include="src\6_pbr\2_3_pbr_with_ibl_irradiance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
